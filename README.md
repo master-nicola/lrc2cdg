@@ -1,6 +1,8 @@
 # lrc2cdg
 Lrc2cdg is an open source converter written in c++ to convert lrc files to cdg files for karaoke machines. Also supports [emscripten](https://github.com/kripken/emscripten) for use on the web.
 
+This fork support local languages, such as Cyrillic. And doesn't affect emscripten.
+
 ## Quick Start
 
 1. Create an LRC file here: https://stage.elsdoerfer.com/elrcmaker/#. 
