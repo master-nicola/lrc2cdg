@@ -22,8 +22,9 @@ CDG specifiation: https://jbum.com//cdg_revealed.html
 
 /*
   Modified to work with localized lyrics. Such as cyrillic, for example.
-  It use a external JSON file alphabet.json which contains a list of arrays of bit masks. 
-  You can add your masks simply adding its into such file or regenerate its from genmask.py edited this script before.
+  It use a external JSON file alphabet.json which contains a list of arrays of bit masks.
+  You can add your masks simply adding its into such file or regenerate its from genmask.py edited
+  this script before.
 */
 #include <vector>
 #include "values.h"
@@ -34,6 +35,8 @@ CDG specifiation: https://jbum.com//cdg_revealed.html
 #include <algorithm>
 #include <math.h>
 #include <cstdint>
+#include <climits>
+#include <unistd.h>
 #include <nlohmann/json.hpp>
 
 // a com is a word
@@ -51,6 +54,7 @@ typedef struct {
 } color;
 
 const std::string jsonFilename{ "alphabet.json" };
+std::string appPath{ };
 
 /// @brief Split string to vector of tokens
 /// @param s string
@@ -342,9 +346,23 @@ void convlrc2cdg(const char *flin, const char *flout, int r, int g, int b)
   }
   write(flout);
 }
+
+std::string getExecutableDir()
+{
+  char buffer[PATH_MAX];
+  ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+  if (len != -1) {
+    buffer[len] = '\0';
+    std::string::size_type pos = std::string(buffer).find_last_of("/");
+    return std::string(buffer).substr(0, pos);
+  }
+  return "";
+}
+
 #ifndef __EMSCRIPTEN__
 int main(int argc, char **argv)
 {
+  appPath = getExecutableDir() + "/";
   if (argc != 3 && argc != 6) {
     std::cout << "lrc2cdg infile.lrc outfile.cdg r g b" << std::endl;
     return 1;
@@ -359,14 +377,14 @@ int main(int argc, char **argv)
     b = atoi(argv[5]);
   }
 
-  std::ifstream jsonFile{ jsonFilename };
+  std::ifstream jsonFile{ appPath + jsonFilename };
 
   if (jsonFile.is_open() && jsonMasks.accept(jsonFile)) {
     jsonFile.seekg(0);
     jsonMasks = nlohmann::json::parse(jsonFile);
     jsonFile.close();
   } else {
-    std::cerr << "File " << jsonFilename << " not found" << std::endl;
+    std::cerr << "File " << appPath + jsonFilename << " not found" << std::endl;
     exit(EXIT_FAILURE);
   }
 
