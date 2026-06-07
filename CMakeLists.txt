@@ -13,29 +13,22 @@
 #You should have received a copy of the GNU General Public License
 #along with lrc2cdg.  If not, see <https://www.gnu.org/licenses/>.
 
-# Declaration of variables
-CC = g++
-CC_FLAGS = -O0 -Wall -Wpedantic -I./json/include
+cmake_minimum_required(VERSION 3.16.0)
+set(CMAKE_CXX_STANDARD 20)
 
-# File names
-EXEC = lrc2cdg
-SOURCES = $(wildcard *.cpp)
-OBJECTS = $(SOURCES:.cpp=.o)
-FILES = alphabet.json genmask.py $(EXEC)
-SRC_PATH = .
-DEST_PATH = /usr/local/$(EXEC)
+set(CMAKE_CXX_FLAGS "-pg -O0 -g3 -Wall -Wpedantic")
+set(CMAKE_CXX_COMPILER g++)
 
-# Main target
-$(EXEC): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXEC)
+project(lrc2cdg LANGUAGES CXX)
 
-# To obtain object files
-%.o: %.cpp
-	$(CC) -c $(CC_FLAGS) $< -o $@
+add_subdirectory(json)
+include_directories(json/include)
 
-# To remove generated files
-clean:
-	rm -f $(EXEC) $(OBJECTS)
+set(SOURCE
+    lrc2cdg.cpp
+)
 
-emscripten:
-	emcc $(SOURCES) -o $(EXEC).js -s EXPORTED_FUNCTIONS="['_convlrc2cdgjs']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]' -s ALLOW_MEMORY_GROWTH=1
+add_executable(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE ${SOURCE})
+
+target_link_libraries(${PROJECT_NAME})

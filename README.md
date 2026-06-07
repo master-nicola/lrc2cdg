@@ -25,11 +25,20 @@ The R, G, and B arguments are optional.
 Most karaoke machines have a usb port. Get a usb stick and plug it in to your computer. Add 2 files to the usb stick, songname.mp3 and songname.cdg. They both must have the same name(but different extensions) so the karaoke machine will play them together. Remove the usb stick from your computer and plug it into the karaoke machine. You may need to change the mode of the karaoke machine to USB.
 
 ## Building
-To build, g++ and make must be installed. Clone the repository, cd to the repostory, and run `make && make install`. This will build lrc2cdg. To build it for the web with emscripten, emscripten build tools must be in the path. Then run `make emscripten`. Move lrc2cdg.js and lrc2cdg.wasm to the Emscripten Compiled folder, then serve that folder with a web server and navigate to the server. Clearing chrome's cache may be nesesary between changes.
+To build, g++ and make must be installed. Clone the repository, cd to the repostory, and run `make`. This will build lrc2cdg. To use utility you need set environments for the current terminal session:
+
+```shell
+    source ./setenvs.sh
+```
+After all you can use lrc2cdg as usual.
+
+To build it for the web with emscripten, emscripten build tools must be in the path. Then run `make emscripten`. Move lrc2cdg.js and lrc2cdg.wasm to the Emscripten Compiled folder, then serve that folder with a web server and navigate to the server. Clearing chrome's cache may be nesesary between changes.
+
+This fork doesn't touched emscripten. Console utility only.
 
 ## Modifying
 In CDG, there are 12x6 tiles. For text, lrc2cdg uses 4 tiles for one character.
-All the characters are stored in values.h, in the array called alphabet. The array is ordered a-z, with special characters after z. The location of special characters is defined in the drawString function. If you are unhappy with the font, you can change the font in the alphabet array. The characters in the alphabet array are 24x12px with 1 representing color, 0 representing black. You can also add other characters by adding an entry to the alphabet array and adding a special character in the drawString function.
+All the characters are stored in alphabet.json. The arrays is ordered 'А-Я','а-я','A-Z','a-z' with special characters after 'z'. If you are unhappy with the font, you can change the font in genmask.py. The characters in the alphabet array are 24x12px with 1 representing color, 0 representing black. You can also add other characters by adding an entry to the alphabet.json array.
 
 ## CD+G Specification
 The program is written around this [CD+G Specification](https://jbum.com//cdg_revealed.html)
